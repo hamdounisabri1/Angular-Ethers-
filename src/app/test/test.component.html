@@ -1,0 +1,15 @@
+<div>
+    <h1>Smart Contract Interaction</h1>
+  
+    <!-- Display the message from the blockchain -->
+    <p><strong>Message from contract:</strong></p>
+    <p>{{ message }}</p>
+  
+    <!-- Button to refresh the message by calling the getMessage method -->
+    <button (click)="meta()">connect wallet and init contract</button>
+
+    <button (click)="getMessage()">Get Message</button>
+    <button (click)="setMessage(5)">set Message</button>
+
+  </div>
+  
