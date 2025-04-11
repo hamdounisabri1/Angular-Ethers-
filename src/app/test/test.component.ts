@@ -4,24 +4,33 @@ import { ContractService } from '../contract.service';
 @Component({
   selector: 'app-test',
   templateUrl: './test.component.html',
-  styleUrls: ['./test.component.css']
+  styleUrls: ['./test.component.css'],
 })
 export class TestComponent {
   message: string = '';
+  balance: string = '';
+  useradd: string = ''; // Define user address property
+  amount: number = 0; // Define amount property
 
   constructor(private contractService: ContractService) {}
 
-  ngOnInit(): void {
+  async addcoins() {
+    // Use the useradd and amount properties from the input
+    await this.contractService.addCoins(this.useradd, this.amount);
   }
 
-  // Get the message from the contract
-  async getMessage() {
-    await this.contractService.getStoredValue();
+  async adduser() {
+    // Use the useradd property from the input
+    this.message = await this.contractService.addUser(this.useradd);
   }
-  async setMessage(newValue: number) {
-    await this.contractService.setStoredValue(newValue);
+
+  async connectwallets() {
+    await this.contractService.connectWallet();
   }
-  async meta() {
-    await this.contractService.connectWallet()
+
+  async getbalance() {
+    // Use the useradd property from the input
+    await this.contractService.getBalance(this.useradd);
+    this.balance = this.contractService.balanceuser;
   }
 }

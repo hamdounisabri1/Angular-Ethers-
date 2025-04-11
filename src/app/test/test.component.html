@@ -1,15 +1,52 @@
-<div>
-    <h1>Smart Contract Interaction</h1>
-  
-    <!-- Display the message from the blockchain -->
-    <p><strong>Message from contract:</strong></p>
-    <p>{{ message }}</p>
-  
-    <!-- Button to refresh the message by calling the getMessage method -->
-    <button (click)="meta()">connect wallet and init contract</button>
+<div class="container">
+  <h1>Smart Contract Interaction</h1>
 
-    <button (click)="getMessage()">Get Message</button>
-    <button (click)="setMessage(5)">set Message</button>
-
+  <!-- Connection Section -->
+  <div class="section">
+    <h2>Connect Wallet</h2>
+    <button class="primary-btn" (click)="connectwallets()">Connect Wallet</button>
   </div>
-  
+
+  <!-- Add User Section -->
+  <div class="section">
+    <h2>Add User</h2>
+    <label for="userAddress">User MetaMask Address:</label>
+    <input
+      type="text"
+      id="userAddress"
+      [(ngModel)]="useradd"
+      placeholder="Enter user address"
+    />
+    <button class="primary-btn" (click)="adduser()">Add User</button>
+    <br>
+      <!-- Error Section -->
+  <div *ngIf="message" class="error-message">
+    <h3 *ngIf="message === 'User already exists.'">⚠️ User already exists.</h3>
+    <h3 *ngIf="message === 'Contract or signer not initialized.'">⚠️ Contract not initialized.</h3>
+  </div>
+  </div>
+
+  <!-- Add Coins Section -->
+  <div class="section">
+    <h2>Add Coins</h2>
+    <label for="amount">Amount:</label>
+    <input
+      type="number"
+      id="amount"
+      [(ngModel)]="amount"
+      placeholder="Enter amount"
+    />
+    <button class="primary-btn" (click)="addcoins()">Add {{ amount }} Coins</button>
+  </div>
+
+  <!-- Get Balance Section -->
+  <div class="section">
+    <h2>Get Balance</h2>
+    <button class="primary-btn" (click)="getbalance()">Get Balance</button>
+    <div *ngIf="balance" class="balance-display">
+      <h3>Balance: {{ balance }}</h3>
+    </div>
+  </div>
+
+
+</div>

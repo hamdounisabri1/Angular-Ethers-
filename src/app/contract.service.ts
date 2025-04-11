@@ -8,17 +8,18 @@ export class ContractService {
   walletAddress: string = '';
   walletBalance: string = '';
   errorMessage: string = '';
-  messageFromContract: string = '';
+  balanceuser: string = '';
 
   private provider: ethers.BrowserProvider | null = null;
   private signer: ethers.Signer | null = null;
   private contract: ethers.Contract | null = null;
 
-  private contractAddress = '0xfDAfA6A17EDEd14D2E7a6052CE2874C65aa15292'; // Replace with actual contract address
-  private contractABI = [
-    "function getStoredValue() public view returns (uint256)",
-    "function setStoredValue(uint256 newValue) public",
-  ];
+  private contractAddress = '0xf6666047c97BBD27318F4D869c94A0C305EA1187'; // Replace with actual contract address
+private contractABI = [
+  "function getBalance(address userMetamaskAdd) view returns (uint256)",
+  "function addVirtualCoins(address userMetamaskAdd, uint256 amount)",
+  "function addUser(address userMetamaskAdd)"
+];
 
   async connectWallet() {
     if (typeof window.ethereum === 'undefined') {
@@ -49,7 +50,7 @@ export class ContractService {
 
 
       console.log('Contract initialized:', this.contract);
-      console.log('Contract initialized:', this.contract.getAddress());
+      console.log('Contract addrese:', this.contract.getAddress());
 
     } catch (error) {
       console.error('Error initializing contract:', error);
@@ -57,25 +58,12 @@ export class ContractService {
     }
   }
 
-  async getStoredValue() {
-    try {
-      if (!this.contract) throw new Error('Contract not initialized');
-      const value = await this.contract['getStoredValue']();
-      this.messageFromContract = value.toString();
-      console.log('Stored value:', this.messageFromContract);
-    } catch (error: any) {
-      console.error('Error fetching stored value:', error.message || error);
-      this.errorMessage = error.message || 'Failed to fetch value.';
-    }
-  }
-
-  async setStoredValue(newValue: number) {
+  async addCoins(addrese:string,amount:number) {
     try {
       if (!this.contract || !this.signer) throw new Error('Contract or signer not initialized');
-      const tx = await this.contract['setStoredValue'](newValue);
+      const tx = await this.contract['addVirtualCoins'](addrese, amount);
       console.log('Transaction sent:', tx.hash);
 
-      // Wait for the transaction to be mined
       await tx.wait();
       console.log('Transaction mined:', tx.hash);
 
@@ -84,6 +72,51 @@ export class ContractService {
       this.errorMessage = error.message || 'Failed to set value.';
       console.log(this.errorMessage);
 
+    }
+  }
+  
+
+  async addUser(addrese:string): Promise<string> {
+    this.errorMessage = 'Contract or signer not initialized';
+    try {
+      // Check if the contract and signer are initialized
+      if (!this.contract || !this.signer) throw new Error('Contract or signer not initialized');
+  
+      // Send the transaction to add the user
+      const tx = await this.contract['addUser'](addrese);
+      console.log('Transaction sent:', tx.hash);
+  
+      // Wait for the transaction to be mined
+      await tx.wait();
+      console.log('Transaction mined:', tx.hash);
+  
+      return 'User added successfully';
+    } catch (error: any) {
+      // Check if the error is due to an already existing user
+      if (error.reason?.includes('User already exists')) {
+        console.log('Error: User already exists');
+        this.errorMessage = 'User already exists.';
+      } else if  (error.message?.includes('Contract or signer not initialized')) {
+        console.log('Error: Contract or signer not initialized');
+        this.errorMessage = 'Contract or signer not initialized.';
+      } else{
+
+        console.log('error:', error.message || error);
+
+      }
+      return this.errorMessage;
+    }
+  }
+
+  async getBalance(addrese:string) {
+    try {
+      if (!this.contract) throw new Error('Contract not initialized');
+      const value = await this.contract['getBalance'](addrese);
+      this.balanceuser = value.toString();
+      console.log('balance:', this.balanceuser);
+    } catch (error: any) {
+      console.error('Error fetching stored value:', error.message || error);
+      this.errorMessage = error.message || 'Failed to fetch value.';
     }
   }
 }
