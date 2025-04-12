@@ -14,11 +14,13 @@ export class ContractService {
   private signer: ethers.Signer | null = null;
   private contract: ethers.Contract | null = null;
 
-  private contractAddress = '0xf6666047c97BBD27318F4D869c94A0C305EA1187'; // Replace with actual contract address
+  private contractAddress = '0xbB39CcEBCbdD0C73db9f101d8D64e10CC465BAe9'; // Replace with actual contract address
 private contractABI = [
   "function getBalance(address userMetamaskAdd) view returns (uint256)",
   "function addVirtualCoins(address userMetamaskAdd, uint256 amount)",
-  "function addUser(address userMetamaskAdd)"
+  "function addUser(address userMetamaskAdd)",
+  "event VirtualCoinAdded(address indexed userMetamaskAdd, uint256 amount)",
+  "event EtherReceived(address indexed sender, uint256 amount)",
 ];
 
   async connectWallet() {
@@ -43,7 +45,7 @@ private contractABI = [
     }
   }
 
-  private initializeContract() {
+   initializeContract() {
     try {
       if (!this.provider || !this.signer) throw new Error('Provider or signer not initialized');
       this.contract = new ethers.Contract(this.contractAddress, this.contractABI, this.signer);
@@ -118,5 +120,35 @@ private contractABI = [
       console.error('Error fetching stored value:', error.message || error);
       this.errorMessage = error.message || 'Failed to fetch value.';
     }
+  }
+
+   listenToVirtualCoinAdded() {
+    console.log('Listening to VirtualCoinAdded event...');
+    if (!this.contract) {
+      console.error('Contract not initialized');
+      return;
+    }
+
+    this.contract.on('VirtualCoinAdded', (userMetamaskAdd: string, amount: number) => {
+      console.log(`VirtualCoinAdded Event:`);
+      console.log(`User Address: ${userMetamaskAdd}`);
+      console.log(`Amount: ${amount.toString()}`); // Convert BigNumber to string for better readability
+    });
+  }
+  public listenToEtherReceived() {
+    console.log('Listening to EtherReceived event...');
+
+    // Ensure the contract is initialized
+    if (!this.contract) {
+      console.error('Contract not initialized');
+      return;
+    }
+  
+    // Listen to the EtherReceived event
+    this.contract.on('EtherReceived', (sender: string, amount: number) => {
+      console.log(`EtherReceived Event:`);
+      console.log(`Sender: ${sender}`);
+      console.log(`Amount: ${ethers.formatEther(amount)} ETH`); // Convert amount to ETH for better readability
+    });
   }
 }

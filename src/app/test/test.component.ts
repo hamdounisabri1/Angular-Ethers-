@@ -12,12 +12,18 @@ export class TestComponent {
   useradd: string = ''; // Define user address property
   amount: number = 0; // Define amount property
 
-  constructor(private contractService: ContractService) {}
+  constructor(private contractService: ContractService) {
+
+
+    
+
+  }
 
   async addcoins() {
     // Use the useradd and amount properties from the input
     await this.contractService.addCoins(this.useradd, this.amount);
   }
+
 
   async adduser() {
     // Use the useradd property from the input
@@ -26,6 +32,9 @@ export class TestComponent {
 
   async connectwallets() {
     await this.contractService.connectWallet();
+
+    //this.contractService.listenToVirtualCoinAdded();
+    this.contractService.listenToEtherReceived();
   }
 
   async getbalance() {
@@ -33,4 +42,6 @@ export class TestComponent {
     await this.contractService.getBalance(this.useradd);
     this.balance = this.contractService.balanceuser;
   }
+
 }
+
